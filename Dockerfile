@@ -6,7 +6,6 @@ ENV PYTHONBUFFERED 1
 COPY ./requirements.txt /tmp/requirements.txt
 COPY ./requirements.dev.txt /tmp/requirements.dev.txt
 COPY ./scripts /scripts
-COPY wait-for-it.sh /usr/local/bin/
 
 
 COPY ./app /app
@@ -34,7 +33,7 @@ RUN python -m venv /py && \
     chown -R django-user:django-user /vol && \
     chmod -R 755 /vol && \
     chmod -R +x /scripts && \
-    chmod +x /usr/local/bin/wait-for-it.sh
+
 
 ENV PATH="/scripts:/py/bin:$PATH"
 
