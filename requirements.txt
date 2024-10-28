@@ -12,3 +12,8 @@ psycopg2==2.9.10
 pycodestyle==2.11.1
 pyflakes==3.2.0
 sqlparse==0.5.1
+Pillow>=11.0.0
+djangorestframework>=3.15.2
+drf-spectacular>=0.27.2
+uwsgi>=2.0.28
+Django>=5.1.2

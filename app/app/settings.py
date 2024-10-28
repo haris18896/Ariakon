@@ -21,12 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-!io0$d84*@*+9@(6w_4p_-^w*5=8p0n=$!o5)cii$j3ez_b-x@"
+# SECRET_KEY = "django-insecure-!io0$d84*@*+9@(6w_4p_-^w*5=8p0n=$!o5)cii$j3ez_b-x@"
+SECRET_KEY = os.environ.get("SECRET_KEY", "changeme")
+
+AUTH_USER_MODEL = "core.User"
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = False
+DEBUG = bool(int(os.environ.get("DEBUG", 0)))
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(",")
 
 
 # Application definition
@@ -39,9 +45,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "core",
-    # "rest_framework",
-    # "rest_framework.authtoken",
-    # "drf_spectacular",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -87,7 +93,7 @@ WSGI_APPLICATION = "app.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "HOST": os.environ.get("DB_HOST"),
+        "HOST": os.environ.get("DB_HOST", "localhost"),
         "NAME": os.environ.get("DB_NAME"),
         "USER": os.environ.get("DB_USER"),
         "PASSWORD": os.environ.get("DB_PASS"),
@@ -129,11 +135,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 # STATIC_URL = "static/"
-STATIC_URL = "/static/static/"
-MEDIA_URL = "/static/media/"
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [
+    os.path.join(
+        BASE_DIR, "static"
+    ),  # Adjust this path based on your project structure
+]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-MEDIA_ROOT = "/vol/web/media"
-STATIC_ROOT = "/vol/web/static"
+
+# Media files configuration
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -142,8 +155,20 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
 }
 
+# SPECTACULAR_SETTINGS = {
+#     "COMPONENT_SPLIT_REQUEST": True,
+# }
 SPECTACULAR_SETTINGS = {
-    "COMPONENT_SPLIT_REQUEST": True,
+    "TITLE": "Ariakon",
+    "DESCRIPTION": "API documentation for your Ariakon",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
