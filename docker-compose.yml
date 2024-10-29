@@ -1,5 +1,6 @@
 version: "3.8"
 
+
 services:
   app:
     build:
@@ -10,13 +11,11 @@ services:
       - "8000:8000"
     volumes:
       - ./app:/app
-      - ./app/staticfiles:/vol/web/staticfiles
       - dev-static-data:/vol/web
     command: >
       sh -c "python manage.py wait_for_db &&
-             python manage.py migrate &&
-             python manage.py collectstatic --noinput &&
-             python manage.py runserver 0.0.0.0:8000"
+              python manage.py migrate &&
+              python manage.py runserver 0.0.0.0:8000"
     environment:
       - DB_HOST=db
       - DB_NAME=devdb
@@ -46,24 +45,6 @@ services:
       sh -c "/py/bin/black /app"
     depends_on:
       - app
-
-  test:
-    build:
-      context: .
-      args:
-        - DEV=true
-    volumes:
-      - ./app:/app
-    command: >
-      sh -c "python manage.py wait_for_db &&
-             python manage.py test"
-    environment:
-      - DB_HOST=db
-      - DB_NAME=devdb
-      - DB_USER=devuser
-      - DB_PASS=changeme
-    depends_on:
-      - db
 
 volumes:
   dev-db-data:
