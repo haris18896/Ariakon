@@ -13,8 +13,7 @@ class UserAdmin(BaseUserAdmin):
     ordering = ["id"]
     list_display = [
         "email",
-        "first_name",
-        "last_name",
+        "name",
         "is_active",
         "is_staff",
     ]
@@ -24,8 +23,7 @@ class UserAdmin(BaseUserAdmin):
             _("Personal Info"),
             {
                 "fields": (
-                    "first_name",
-                    "last_name",
+                    "name",
                     "phone_number",
                     "image",
                 )
@@ -53,8 +51,7 @@ class UserAdmin(BaseUserAdmin):
                     "email",
                     "password1",
                     "password2",
-                    "first_name",
-                    "last_name",
+                    "name",
                     "phone_number",
                     "image",
                     "is_active",

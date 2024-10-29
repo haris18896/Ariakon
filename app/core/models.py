@@ -42,10 +42,8 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     """User in the system with extended fields"""
 
-    last_name = models.CharField(max_length=255)
-    first_name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, unique=True)
-    uuid = models.UUIDField(default=uuid4, editable=False, unique=True)
     phone_number = models.CharField(
         max_length=15,
         validators=[RegexValidator(r"^\+?1?\d{9,15}$")],
@@ -59,7 +57,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["first_name", "last_name"]  # Removed "user_name"
+    REQUIRED_FIELDS = ["name"]
 
     def __str__(self):
-        return f"{self.email}"  # Changed to return the email instead of user_name
+        return f"{self.email}"

@@ -22,14 +22,14 @@ class ModelTests(TestCase):
         """Test creating a user with required fields is successful"""
         user = create_user(
             email="test@example.com",
+            name="Haris ahmad",
             password="testpass123",
-            first_name="First",
-            last_name="Last",
+            phone_number='03459100704'
         )
 
+        self.assertEqual(user.name, "Haris ahmad")
         self.assertEqual(user.email, "test@example.com")
-        self.assertEqual(user.first_name, "First")
-        self.assertEqual(user.last_name, "Last")
+        self.assertEqual(user.phone_number, "03459100704")
         self.assertTrue(user.check_password("testpass123"))
 
     def test_new_user_email_normalized(self):
@@ -59,15 +59,13 @@ class ModelTests(TestCase):
         user = get_user_model().objects.create_user(
             email=email,
             password=password,
-            first_name="Test",
-            last_name="User",
+            name="Test User",
             phone_number="1234567890",
         )
 
         self.assertEqual(user.email, email)
         self.assertTrue(user.check_password(password))
-        self.assertEqual(user.first_name, "Test")
-        self.assertEqual(user.last_name, "User")
+        self.assertEqual(user.name, "Test User")
         self.assertEqual(user.phone_number, "1234567890")
 
     def test_user_image_field(self):
@@ -95,17 +93,6 @@ class ModelTests(TestCase):
                 phone_number="12345678901234",
             )
             user.full_clean()  # Ensure validation occurs before save
-
-    def test_user_first_name_max_length(self):
-        """Test that creating a user with first_name exceeding max length raises ValidationError"""
-        with self.assertRaises(ValidationError):
-            user = create_user(
-                email="longname@example.com",
-                password="testPass123",
-                first_name="Haris Ahmad Khan",
-                # first_name="a" * 256,  # Exceeds max_length=255
-            )
-            user.full_clean()
 
     def test_inactive_user_creation(self):
         """Test creating an inactive user"""
