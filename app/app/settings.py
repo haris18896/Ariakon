@@ -93,7 +93,7 @@ WSGI_APPLICATION = "app.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "HOST": os.environ.get("DB_HOST", "localhost"),
+        "HOST": os.environ.get("DB_HOST"),
         "NAME": os.environ.get("DB_NAME"),
         "USER": os.environ.get("DB_USER"),
         "PASSWORD": os.environ.get("DB_PASS"),
@@ -135,18 +135,24 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 # STATIC_URL = "static/"
-STATIC_URL = "/static/"
-STATICFILES_DIRS = [
-    os.path.join(
-        BASE_DIR, "static"
-    ),  # Adjust this path based on your project structure
-]
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_URL = "/static/static/"
+MEDIA_URL = "/static/media/"
 
+MEDIA_ROOT = "/vol/web/media"
+STATIC_ROOT = "/vol/web/static"
 
-# Media files configuration
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+# STATIC_URL = "/static/"
+# STATICFILES_DIRS = [
+#     os.path.join(
+#         BASE_DIR, "static"
+#     ),  # Adjust this path based on your project structure
+# ]
+# STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+#
+#
+# # Media files configuration
+# MEDIA_URL = "/media/"
+# MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
