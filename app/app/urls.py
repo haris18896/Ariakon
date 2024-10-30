@@ -25,7 +25,7 @@ urlpatterns = [
     # Paths
     path("admin/", admin.site.urls),
     path("api/user/", include("user.urls")),
-    path("api/recipe/", include("audio.urls")),
+    path("api/audio/", include("audio.urls")),
 ]
 
 if settings.DEBUG:
