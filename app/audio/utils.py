@@ -2,6 +2,7 @@ import numpy as np
 import librosa
 from scipy.signal import find_peaks
 
+
 def calculate_speed_of_sound(distance, audio_file_path):
     audio_data, sr = librosa.load(audio_file_path, sr=None)
     amplitude = np.abs(audio_data)

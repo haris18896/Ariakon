@@ -26,17 +26,16 @@ class AudioFileListView(generics.ListCreateAPIView):
             serializer.save(user=request.user)
             audio_file_path = serializer.instance.file.path
             speed, peaks = calculate_speed_of_sound(float(distance), audio_file_path)
-            return Response({
-                "speed": speed,
-                "peaks": peaks
-            }, status=status.HTTP_201_CREATED)
+            return Response(
+                {"speed": speed, "peaks": peaks}, status=status.HTTP_201_CREATED
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AudioFileDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = AudioFile.objects.all()
     serializer_class = AudioFileSerializer
-    lookup_field = 'id'
+    lookup_field = "id"
 
     def delete(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -45,7 +44,7 @@ class AudioFileDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', True)
+        partial = kwargs.pop("partial", True)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
 
