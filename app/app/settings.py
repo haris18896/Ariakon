@@ -25,8 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY", "changeme")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = False
-DEBUG = bool(int(os.environ.get("DEBUG", 0)))
+# DEBUG = True
+DEBUG = bool(int(os.environ.get("DEBUG", 1)))
 
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(",")
@@ -134,7 +134,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 # STATIC_URL = "static/"
-STATIC_URL = "/static/static/"
+STATIC_URL = "static/static/"
 MEDIA_URL = "/static/media/"
 
 MEDIA_ROOT = "/vol/web/media"
