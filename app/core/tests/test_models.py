@@ -2,7 +2,6 @@
 Tests for models.
 """
 
-from unittest.mock import patch
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -24,7 +23,7 @@ class ModelTests(TestCase):
             email="test@example.com",
             name="Haris ahmad",
             password="testpass123",
-            phone_number='03459100704'
+            phone_number="03459100704",
         )
 
         self.assertEqual(user.name, "Haris ahmad")
@@ -87,11 +86,13 @@ class ModelTests(TestCase):
     def test_create_user_with_invalid_phone_number_raises_error(self):
         """Test that creating a user with an invalid phone number raises a ValidationError"""
         with self.assertRaises(ValidationError):
+
             user = create_user(
                 email="invalidphone@example.com",
                 password="testPass123",
                 phone_number="12345678901234",
             )
+
             user.full_clean()  # Ensure validation occurs before save
 
     def test_inactive_user_creation(self):

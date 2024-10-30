@@ -5,8 +5,6 @@ Tests for the user API.
 from django.urls import reverse
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from django.core.files.uploadedfile import SimpleUploadedFile
-
 
 from rest_framework.test import APIClient
 from rest_framework import status
@@ -31,10 +29,10 @@ class PublicUserApiTests(TestCase):
     def test_create_user_success(self):
         """Test creating a user is successful."""
         payload = {
-            'email': 'test@example.com',
-            'password': 'testpassword123',
-            'name': 'Test User',
-            'phone_number': '1234567890',
+            "email": "test@example.com",
+            "password": "testpassword123",
+            "name": "Test User",
+            "phone_number": "1234567890",
         }
         res = self.client.post(CREATE_USER_URL, payload)
 
@@ -133,8 +131,8 @@ class PrivateUserApiTests(TestCase):
             {
                 "name": self.user.name,
                 "email": self.user.email,
-                'phone_number': self.user.phone_number,
-                'image': self.user.image
+                "phone_number": self.user.phone_number,
+                "image": self.user.image,
             },
         )
 
