@@ -1,12 +1,15 @@
 """Database Models"""
 
 from django.db import models
+from django.conf import settings
+from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
+
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
 )
-from django.core.validators import RegexValidator
 
 
 class UserManager(BaseUserManager):
@@ -58,3 +61,29 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f"{self.email}"
+
+
+class AudioFile(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="audio_files"
+    )
+    file = models.FileField(upload_to="audio/")
+    distance = models.FloatField(help_text="Distance between the pool balls in meters.")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Audio File {self.id} for user {self.user.email}"
+
+    def clean(self):
+        """Custom validation to ensure user is not None."""
+        if self.user_id is None:
+            raise ValueError("User cannot be None.")
+
+        """Custom validation to ensure distance is non-negative."""
+        if self.distance < 0:
+            raise ValidationError("Distance cannot be negative.")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)

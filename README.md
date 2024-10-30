@@ -9,4 +9,30 @@ $ docker-compose run --rm app sh -c "python manage.py makemigrations"
 $ docker-compose run --rm app sh -c "python manage.py wait_for_db && python manage.py migrate"
 ```
 
+* To build docker image
+```sh
+$ docker-compose build
+```
+
+* To run the application
+```sh
+$ docker-compose up
+```
+
+* To test the application
+```sh
+$ docker-compose run --rm app sh -c "python manage.py test"
+```
+
+* To Check linting
+```sh
+$ docker-compose run --rm app sh -c "flake8"
+```
+
+
+
+* To check database command working
+```sh
+$ docker-compose run --rm app sh -c "python manage.py wait_for_db"
+```
 

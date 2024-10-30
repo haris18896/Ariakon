@@ -24,9 +24,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECRET_KEY = "django-insecure-!io0$d84*@*+9@(6w_4p_-^w*5=8p0n=$!o5)cii$j3ez_b-x@"
 SECRET_KEY = os.environ.get("SECRET_KEY", "changeme")
 
-AUTH_USER_MODEL = "core.User"
-
-
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = False
 DEBUG = bool(int(os.environ.get("DEBUG", 0)))
@@ -45,6 +42,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "core",
+    "user",
+    "audio",
     "rest_framework",
     "rest_framework.authtoken",
     "drf_spectacular",
@@ -148,9 +147,6 @@ STATIC_ROOT = "/vol/web/static"
 #     ),  # Adjust this path based on your project structure
 # ]
 # STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-#
-#
-# # Media files configuration
 # MEDIA_URL = "/media/"
 # MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
@@ -159,22 +155,27 @@ STATIC_ROOT = "/vol/web/static"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+AUTH_USER_MODEL = "core.User"
+
+
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
-    ],
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-    ],
 }
 
-# SPECTACULAR_SETTINGS = {
-#     "COMPONENT_SPLIT_REQUEST": True,
+# REST_FRAMEWORK = {
+#     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+#     "DEFAULT_AUTHENTICATION_CLASSES": [
+#         "rest_framework.authentication.TokenAuthentication",
+#     ],
+#     "DEFAULT_PERMISSION_CLASSES": [
+#         "rest_framework.permissions.IsAuthenticated",
+#     ],
 # }
+
 SPECTACULAR_SETTINGS = {
     "TITLE": "Ariakon",
     "DESCRIPTION": "API documentation for your Ariakon",
     "VERSION": "1.0.0",
+    "COMPONENT_SPLIT_REQUEST": True,
     "SERVE_INCLUDE_SCHEMA": False,
 }
