@@ -16,4 +16,4 @@ Pillow>=11.0.0
 djangorestframework>=3.15.2
 drf-spectacular>=0.27.2
 uwsgi>=2.0.28
-Django>=5.1.2
+
