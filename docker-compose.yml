@@ -23,6 +23,7 @@ services:
       - DB_NAME=devdb
       - DB_USER=devuser
       - DB_PASS=changeme
+      - NUMBA_CACHE_DIR=/nonexistent_path
     depends_on:
       - db
 

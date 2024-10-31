@@ -64,9 +64,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class AudioFile(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="audio_files"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="audio_files")
     file = models.FileField(upload_to="audio/")
     distance = models.FloatField(help_text="Distance between the pool balls in meters.")
     created_at = models.DateTimeField(auto_now_add=True)
