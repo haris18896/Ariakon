@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import AudioFileListView, AudioFileDetailView
 
-app_name = "audio"
+app_name = 'audio'
 
 
 urlpatterns = [

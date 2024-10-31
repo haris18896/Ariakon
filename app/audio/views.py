@@ -18,7 +18,6 @@ class AudioFileListView(generics.ListCreateAPIView):
     authentication_classes = [authentication.TokenAuthentication]
 
     def get_queryset(self):
-        print("check for the user : ", self.request.user)
         return AudioFile.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
