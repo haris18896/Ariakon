@@ -31,9 +31,7 @@ class AudioFileListView(generics.ListCreateAPIView):
             serializer.save(user=request.user)
             audio_file_path = serializer.instance.file.path
             # speed, peaks = calculate_speed_of_sound(float(distance), audio_file_path)
-            return Response(
-                {**serializer.data}, status=status.HTTP_201_CREATED
-            )
+            return Response({**serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
