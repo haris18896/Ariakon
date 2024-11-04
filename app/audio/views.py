@@ -30,15 +30,16 @@ class AudioFileListView(generics.ListCreateAPIView):
     def list(self, request, *args, **kwargs):
         # Get the queryset
         queryset = self.get_queryset()
-
-        # Prepare the response data with calculated speed and peaks
         audio_files_data = []
+
 
         for instance in queryset:
             serializer = self.get_serializer(instance)
+
             speed, speed_unit, peaks = calculate_speed_of_sound(
-                float(instance.distance), instance.file.path
+                float(instance.distance), instance.file.path, instance.unit
             )
+
 
             audio_files_data.append(
                 {
