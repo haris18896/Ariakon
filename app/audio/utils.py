@@ -7,6 +7,18 @@ from scipy.signal import find_peaks
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+def convert_speed_to_mph(speed, unit):
+    """Convert speed from m/s to mph based on the distance unit."""
+    if unit == "inches":
+        # 1 m/s = 0.0000157828283 miles; therefore for inches:
+        return speed * 0.0000157828283 * 3600
+    elif unit == "meters":
+        # 1 m/s = 0.000621371 miles; therefore for meters:
+        return speed * 0.000621371 * 3600
+    elif unit == "centimeters":
+        # 1 m/s = 0.00000621371 miles; therefore for centimeters:
+        return speed * 0.00000621371 * 3600
+    return speed  # Return the original speed if unit is unknown
 
 def calculate_speed_of_sound(distance, audio_file_path, unit="inches"):
     unit_conversion = {
@@ -50,3 +62,5 @@ def calculate_speed_of_sound(distance, audio_file_path, unit="inches"):
 
 
     return "Not enough hits detected", [], unit + "/sec"
+
+

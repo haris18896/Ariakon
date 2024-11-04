@@ -1,3 +1,4 @@
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -6,7 +7,7 @@ from rest_framework import status, generics, authentication, permissions
 
 from core.models import AudioFile
 from .serializers import AudioFileSerializer
-from .utils import calculate_speed_of_sound
+from .utils import calculate_speed_of_sound, convert_speed_to_mph
 
 import logging
 
@@ -22,7 +23,7 @@ class AudioFileListView(generics.ListCreateAPIView):
     authentication_classes = [authentication.TokenAuthentication]
 
     def get_queryset(self):
-        return AudioFile.objects.filter(user=self.request.user)
+        return AudioFile.objects.filter(user=self.request.user).order_by('-updated_at')
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -137,3 +138,49 @@ class AudioFileDetailView(generics.RetrieveUpdateDestroyAPIView):
             unit = request.data.get("unit", instance.unit)
             return self.calculate_and_respond(instance, serializer.data, unit=unit)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AudioStatisticsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [authentication.TokenAuthentication]
+
+    def get(self, request, *args, **kwargs):
+        # Get the user's audio files
+        audio_files = AudioFile.objects.filter(user=request.user)
+        audio_statistics = []
+        all_speeds = []
+
+        for audio_file in audio_files:
+            speed, speed_unit, peaks = calculate_speed_of_sound(
+                float(audio_file.distance), audio_file.file.path, audio_file.unit
+            )
+
+            # Convert speed to MPH
+            speed_mph = convert_speed_to_mph(speed, audio_file.unit)
+            all_speeds.append(speed_mph)
+
+            audio_statistics.append(
+                {
+                    "file_name": audio_file.file.name,
+                    "speed": speed_mph,
+                    "speed_unit": "MPH",  # Update unit to MPH
+                    "peaks": peaks,
+                    "distance": audio_file.distance,
+                    "unit": audio_file.unit,
+                }
+            )
+
+        # Calculate min, max, and average speeds
+        min_speed = min(all_speeds) if all_speeds else 0
+        max_speed = max(all_speeds) if all_speeds else 0
+        avg_speed = sum(all_speeds) / len(all_speeds) if all_speeds else 0
+
+        response_data = {
+            "audio_statistics": audio_statistics,
+            "min_speed": min_speed,
+            "max_speed": max_speed,
+            "avg_speed": avg_speed,
+            "all_speeds": all_speeds,
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
