@@ -27,15 +27,52 @@ class AudioFileListView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    def list(self, request, *args, **kwargs):
+        # Get the queryset
+        queryset = self.get_queryset()
+
+        # Prepare the response data with calculated speed and peaks
+        audio_files_data = []
+
+        for instance in queryset:
+            serializer = self.get_serializer(instance)
+            speed, speed_unit, peaks = calculate_speed_of_sound(
+                float(instance.distance), instance.file.path
+            )
+
+            audio_files_data.append(
+                {
+                    **serializer.data,
+                    "speed": speed,
+                    "speed_unit": speed_unit,
+                    "peaks": peaks,
+                }
+            )
+
+        # logger.info(f"audio_files_data :  {audio_files_data}")
+
+        return Response(audio_files_data, status=status.HTTP_200_OK)
+
     def post(self, request, *args, **kwargs):
         distance = request.data.get("distance", 0)
+        unit = request.data.get("unit", "inches")
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
             serializer.save(user=request.user)
             audio_file_path = serializer.instance.file.path
-            # speed, peaks = calculate_speed_of_sound(float(distance), audio_file_path)
-            return Response({**serializer.data}, status=status.HTTP_201_CREATED)
+            speed, speed_unit, peaks = calculate_speed_of_sound(
+                float(distance), audio_file_path, unit
+            )
+            return Response(
+                {
+                    **serializer.data,
+                    "speed": speed,
+                    "speed_unit": speed_unit,
+                    "peaks": peaks,
+                },
+                status=status.HTTP_201_CREATED,
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -53,20 +90,30 @@ class AudioFileDetailView(generics.RetrieveUpdateDestroyAPIView):
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def calculate_and_respond(self, instance, serializer_data):
+    def calculate_and_respond(self, instance, serializer_data, unit=None):
         """Helper function to calculate speed and peaks and format the response."""
         distance = instance.distance
         audio_file_path = instance.file.path
 
-        # calculate_speed_of_sound(float(distance), audio_file_path)
-        speed, peaks = calculate_speed_of_sound(float(distance), audio_file_path)
-        logger.info(f"Checking......speed : {speed}, peaks: {peaks}")
-        return Response({**serializer_data, "speed": speed, "peaks": peaks}, status=status.HTTP_200_OK)
+        unit = unit or instance.unit
+        speed, speed_unit, peaks = calculate_speed_of_sound(
+            float(distance), audio_file_path, unit
+        )
+
+        return Response(
+            {
+                **serializer_data,
+                "speed": speed,
+                "speed_unit": speed_unit,
+                "peaks": peaks,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        # return Response({**serializer.data}, status=status.HTTP_200_OK)
+
         return self.calculate_and_respond(instance, serializer.data)
 
     def patch(self, request, *args, **kwargs):
@@ -76,7 +123,8 @@ class AudioFileDetailView(generics.RetrieveUpdateDestroyAPIView):
 
         if serializer.is_valid():
             serializer.save()
-            return self.calculate_and_respond(instance, serializer.data)
+            unit = request.data.get("unit", instance.unit)
+            return self.calculate_and_respond(instance, serializer.data, unit=unit)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, *args, **kwargs):
@@ -85,5 +133,6 @@ class AudioFileDetailView(generics.RetrieveUpdateDestroyAPIView):
 
         if serializer.is_valid():
             serializer.save()
-            return self.calculate_and_respond(instance, serializer.data)
+            unit = request.data.get("unit", instance.unit)
+            return self.calculate_and_respond(instance, serializer.data, unit=unit)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

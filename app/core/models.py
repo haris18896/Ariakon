@@ -69,6 +69,12 @@ class AudioFile(models.Model):
     distance = models.FloatField(help_text="Distance between the pool balls in meters.")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    UNIT_CHOICES = [
+        ("inches", "In"),
+        ("meters", "M"),
+        ("centimeters", "CM"),
+    ]
+    unit = models.CharField(max_length=20, choices=UNIT_CHOICES, default="inches")
 
     def __str__(self):
         return f"Audio File {self.id} for user {self.user.email}"
