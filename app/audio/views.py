@@ -8,6 +8,10 @@ from core.models import AudioFile
 from .serializers import AudioFileSerializer
 from .utils import calculate_speed_of_sound
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class AudioFileListView(generics.ListCreateAPIView):
     queryset = AudioFile.objects.all()
@@ -51,12 +55,13 @@ class AudioFileDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def calculate_and_respond(self, instance, serializer_data):
         """Helper function to calculate speed and peaks and format the response."""
-        distance = getattr(instance, "distance", 0)
-        print("distance : ", distance)
+        distance = instance.distance
         audio_file_path = instance.file.path
-        print("audio_file_path: ", audio_file_path)
-        # speed, peaks = calculate_speed_of_sound(float(distance), audio_file_path)
-        return Response({**serializer_data}, status=status.HTTP_200_OK)
+
+        # calculate_speed_of_sound(float(distance), audio_file_path)
+        speed, peaks = calculate_speed_of_sound(float(distance), audio_file_path)
+        logger.info(f"Checking......speed : {speed}, peaks: {peaks}")
+        return Response({**serializer_data, "speed": speed, "peaks": peaks}, status=status.HTTP_200_OK)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
