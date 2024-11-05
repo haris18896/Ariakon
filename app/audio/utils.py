@@ -18,48 +18,50 @@ def convert_speed_to_mph(speed, unit):
     return speed
 
 
+import os
+import numpy as np
+from pydub import AudioSegment
+from scipy.signal import find_peaks
+
 def calculate_speed_of_sound(distance, audio_file_path, unit="inches"):
     unit_conversion = {
-        "inches": 1,
-        "meters": 39.3701,
-        "centimeters": 0.393701,
+        "inches": 0.0254,      # 1 inch = 0.0254 meters
+        "meters": 1,           # 1 meter = 1 meter
+        "centimeters": 0.01,   # 1 centimeter = 0.01 meters
     }
-    distance_in_inches = distance * unit_conversion[unit]
+    # Convert the distance to meters
+    distance_in_meters = distance * unit_conversion.get(unit, 1)
 
     if not os.path.exists(audio_file_path):
-        # logger.error(f"Audio file not found: {audio_file_path}")
-        return "Audio file not found", [], unit + "/sec"
+        return "Audio file not found", [], "m/s"
 
     try:
         # Load audio with pydub
         audio = AudioSegment.from_file(audio_file_path)
         audio_data = np.array(audio.get_array_of_samples())
-        # logger.info(f"Loaded audio data with shape: {audio_data.shape}")
     except Exception as e:
-        # logger.error(f"Error loading audio file with pydub: {e}")
-        return "Error loading audio", [], unit + "/sec"
+        return f"Error loading audio: {e}", [], "m/s"
 
     # Normalize audio data and set a threshold for peak detection
     amplitude = np.abs(audio_data)
     threshold = np.percentile(amplitude, 95)
     hits, _ = find_peaks(amplitude, height=threshold, distance=5000)
-    # logger.info(f"Number of hits detected: {len(hits)}")
 
     if len(hits) > 1:
         # Calculate time difference between peaks
         time_difference = (hits[1] - hits[0]) / audio.frame_rate  # time in seconds
-        speed_in_inches_per_second = distance_in_inches / time_difference
-        speed = speed_in_inches_per_second / unit_conversion[unit]
-        speed_unit = unit + "/sec"  # e.g., meters/sec, centimeters/sec
+        speed_in_meters_per_second = distance_in_meters / time_difference
 
-        # logger.info(
-        #     f"distance: {distance_in_inches}, time_difference: {time_difference}, "
-        #     f"Speed of sound: {speed}, unit: {speed_unit}, hits: {hits}"
-        # )
+        # Convert speed to miles per hour (1 m/s ≈ 2.23694 MPH)
+        speed_in_mph = speed_in_meters_per_second * 2.23694
+
         return (
-            speed,
-            speed_unit,
+            speed_in_meters_per_second,
+            "m/s",
+            speed_in_mph,
+            "MPH",
             hits.tolist(),
-        )  # Return speed as a number and unit separately
+        )
 
-    return "Not enough hits detected", [], unit + "/sec"
+    return "Not enough hits detected", [], "m/s"
+
