@@ -40,12 +40,17 @@ class AudioFileListView(generics.ListCreateAPIView):
                 float(instance.distance), instance.file.path, instance.unit
             )
 
+            speed_mph = convert_speed_to_mph(speed, speed_unit)
+
+
             audio_files_data.append(
                 {
                     **serializer.data,
                     "speed": speed,
                     "speed_unit": speed_unit,
                     "peaks": peaks,
+                    "speed_mph": speed_mph,
+                    "unit_mph": "MPH"
                 }
             )
 
@@ -64,12 +69,16 @@ class AudioFileListView(generics.ListCreateAPIView):
             speed, speed_unit, peaks = calculate_speed_of_sound(
                 float(distance), audio_file_path, unit
             )
+            speed_mph = convert_speed_to_mph(speed, speed_unit)
+
             return Response(
                 {
                     **serializer.data,
                     "speed": speed,
                     "speed_unit": speed_unit,
                     "peaks": peaks,
+                    "speed_mph": speed_mph,
+                    "unit_mph": "MPH"
                 },
                 status=status.HTTP_201_CREATED,
             )
@@ -100,12 +109,16 @@ class AudioFileDetailView(generics.RetrieveUpdateDestroyAPIView):
             float(distance), audio_file_path, unit
         )
 
+        speed_mph = convert_speed_to_mph(speed, speed_unit)
+
         return Response(
             {
                 **serializer_data,
                 "speed": speed,
                 "speed_unit": speed_unit,
                 "peaks": peaks,
+                "speed_mph": speed_mph,
+                "unit_mph": "MPH"
             },
             status=status.HTTP_200_OK,
         )

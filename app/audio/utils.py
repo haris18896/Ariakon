@@ -9,24 +9,20 @@ logger = logging.getLogger(__name__)
 
 
 def convert_speed_to_mph(speed, unit):
-    """Convert speed from m/s to mph based on the distance unit."""
     if unit == "inches":
-        # 1 m/s = 0.0000157828283 miles; therefore for inches:
         return speed * 0.0000157828283 * 3600
     elif unit == "meters":
-        # 1 m/s = 0.000621371 miles; therefore for meters:
         return speed * 0.000621371 * 3600
     elif unit == "centimeters":
-        # 1 m/s = 0.00000621371 miles; therefore for centimeters:
         return speed * 0.00000621371 * 3600
-    return speed  # Return the original speed if unit is unknown
+    return speed
 
 
 def calculate_speed_of_sound(distance, audio_file_path, unit="inches"):
     unit_conversion = {
-        "inches": 1,  # Base unit
-        "meters": 39.3701,  # 1 meter = 39.3701 inches
-        "centimeters": 0.393701,  # 1 cm = 0.393701 inches
+        "inches": 1,
+        "meters": 39.3701,
+        "centimeters": 0.393701,
     }
     distance_in_inches = distance * unit_conversion[unit]
 
