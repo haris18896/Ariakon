@@ -9,5 +9,7 @@ urlpatterns = [
     path(
         "audio-files/<int:id>/", AudioFileDetailView.as_view(), name="audiofile-detail"
     ),
-    path('audio-statistics/', AudioStatisticsView.as_view(), name='audio-statistics'),  # New endpoint
+    path(
+        "audio-statistics/", AudioStatisticsView.as_view(), name="audio-statistics"
+    ),  # New endpoint
 ]

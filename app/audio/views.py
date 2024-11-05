@@ -23,7 +23,7 @@ class AudioFileListView(generics.ListCreateAPIView):
     authentication_classes = [authentication.TokenAuthentication]
 
     def get_queryset(self):
-        return AudioFile.objects.filter(user=self.request.user).order_by('-updated_at')
+        return AudioFile.objects.filter(user=self.request.user).order_by("-updated_at")
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -33,14 +33,12 @@ class AudioFileListView(generics.ListCreateAPIView):
         queryset = self.get_queryset()
         audio_files_data = []
 
-
         for instance in queryset:
             serializer = self.get_serializer(instance)
 
             speed, speed_unit, peaks = calculate_speed_of_sound(
                 float(instance.distance), instance.file.path, instance.unit
             )
-
 
             audio_files_data.append(
                 {
