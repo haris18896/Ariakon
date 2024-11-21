@@ -95,8 +95,17 @@ class AudioFileDetailView(generics.RetrieveUpdateDestroyAPIView):
             float(instance.distance), instance.file.path, instance.unit
         )
         if include_amplitude:
-            speed_mps, speed_unit, speed_mph, mph_unit, peaks, amplitude_formatted = result
-            return speed_mps, speed_unit, speed_mph, mph_unit, peaks, amplitude_formatted
+            speed_mps, speed_unit, speed_mph, mph_unit, peaks, amplitude_formatted = (
+                result
+            )
+            return (
+                speed_mps,
+                speed_unit,
+                speed_mph,
+                mph_unit,
+                peaks,
+                amplitude_formatted,
+            )
         else:
             speed_mps, speed_unit, speed_mph, mph_unit, peaks, _ = result
             return speed_mps, speed_unit, speed_mph, mph_unit, peaks
@@ -104,8 +113,9 @@ class AudioFileDetailView(generics.RetrieveUpdateDestroyAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        speed_mps, speed_unit, speed_mph, mph_unit, peaks, amps = self.calculate_speed_and_peaks(instance,
-                                                                                                 include_amplitude=True)
+        speed_mps, speed_unit, speed_mph, mph_unit, peaks, amps = (
+            self.calculate_speed_and_peaks(instance, include_amplitude=True)
+        )
 
         return Response(
             {
@@ -128,7 +138,9 @@ class AudioFileDetailView(generics.RetrieveUpdateDestroyAPIView):
         if serializer.is_valid():
             serializer.save()
             unit = request.data.get("unit", instance.unit)
-            speed_mps, speed_unit, speed_mph, mph_unit, peaks = self.calculate_speed_and_peaks(instance)
+            speed_mps, speed_unit, speed_mph, mph_unit, peaks = (
+                self.calculate_speed_and_peaks(instance)
+            )
             return Response(
                 {
                     **serializer.data,
@@ -149,7 +161,9 @@ class AudioFileDetailView(generics.RetrieveUpdateDestroyAPIView):
         if serializer.is_valid():
             serializer.save()
             unit = request.data.get("unit", instance.unit)
-            speed_mps, speed_unit, speed_mph, mph_unit, peaks = self.calculate_speed_and_peaks(instance)
+            speed_mps, speed_unit, speed_mph, mph_unit, peaks = (
+                self.calculate_speed_and_peaks(instance)
+            )
             return Response(
                 {
                     **serializer.data,
@@ -169,13 +183,17 @@ class AudioStatisticsView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
 
     def get(self, request, *args, **kwargs):
-        audio_files = AudioFile.objects.filter(user=request.user).order_by("-updated_at")
+        audio_files = AudioFile.objects.filter(user=request.user).order_by(
+            "-updated_at"
+        )
         audio_statistics = []
         all_speeds = []
 
         for audio_file in audio_files:
-            speed_mps, speed_unit, speed_mph, mph_unit, peaks, _ = calculate_speed_of_sound(
-                float(audio_file.distance), audio_file.file.path, audio_file.unit
+            speed_mps, speed_unit, speed_mph, mph_unit, peaks, _ = (
+                calculate_speed_of_sound(
+                    float(audio_file.distance), audio_file.file.path, audio_file.unit
+                )
             )
             all_speeds.append(speed_mph)
 

@@ -28,8 +28,8 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "changeme")
 # DEBUG = True
 DEBUG = bool(int(os.environ.get("DEBUG", 1)))
 
-# ALLOWED_HOSTS = []
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(",")
+ALLOWED_HOSTS = ['*', ".vercel.app", '.now.sh']
+# ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(",")
 
 
 # Application definition
